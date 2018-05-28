@@ -9,3 +9,5 @@ testPercentage = 80
 beerModel = Model(filePath)
 
 beerModel.splitData(testPercentage)
+
+beerModel.displayScore()
