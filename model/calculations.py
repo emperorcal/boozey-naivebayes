@@ -8,14 +8,14 @@ class Model(object):
         self.beerDataframe = pd.read_csv(filePath)
 
     def splitData(self, testPercentage):
-    	#Split original dataframe into test and train dataframes by given proportion
+    	#Split beer review dataframe into test and train dataframes by given proportion
         dataframeSize = self.beerDataframe.shape[0] - 1
         splitIndex = int(dataframeSize * (testPercentage/100))
         self.testBeerData = self.beerDataframe.iloc[splitIndex:]
         self.trainBeerData = self.beerDataframe.iloc[:splitIndex]
 
     def displayScore(self):
-    	#Display bar chart of the grouping of scores
+    	#Display bar chart of the grouping of scores (as ratio)
     	uniqueScores = self.trainBeerData.Score.unique()
     	for score in uniqueScores:
     		uniqueScoreCount = pd.DataFrame(pd.value_counts(self.trainBeerData.Score.values, sort=score, normalize=True).reset_index())
