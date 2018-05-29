@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import string
 import nltk
 from nltk.corpus import stopwords
+from nltk.stem.porter import PorterStemmer
 
 class Model(object):
     def __init__(self, filePath):
@@ -42,6 +43,9 @@ class Model(object):
     	#Filter out stop words
     	filterWords = set(stopwords.words('english'))
     	self.words = [word for word in self.words if not word in filterWords]
+    	#Stem words to reduce variance of words
+    	porter = PorterStemmer()
+    	self.words = [porter.stem(word) for word in self.words]
     	return self.words
 
 
