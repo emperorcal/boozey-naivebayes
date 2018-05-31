@@ -12,4 +12,4 @@ beerModel.splitData(testPercentage)
 
 beerModel.displayScore()
 
-print(beerModel.cleanText("This a review of a beer called Rosebeer. I think it is rubbish but it had a good aroma!!! It's better than a fish that is fishing in a fishery."))
+print(beerModel.cleanText("This a review of a beer calld Rosebeer. I thank it is rubbsh but it had a gud aroma!!! It's bettr than a fish that is fishin in a fishery."))

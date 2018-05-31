@@ -1,9 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import string
-import nltk
+#import nltk
 from nltk.corpus import stopwords
-from nltk.stem.porter import PorterStemmer
+from nltk.stem import WordNetLemmatizer
+from autocorrect import spell
 
 class Model(object):
     def __init__(self, filePath):
@@ -31,8 +32,10 @@ class Model(object):
 
     def cleanText(self, text):
     	#Clean review text, to allow for improved tokenisation
-    	#Split into words by whitespace
+    	#Split into words by spaces
     	self.words = text.split()
+    	#Perfom spelling correction
+    	self.words = [spell(word) for word in self.words]
     	#Remove all punctuation
     	table = str.maketrans('', '', string.punctuation)
     	self.words = [word.translate(table) for word in self.words]
@@ -43,9 +46,9 @@ class Model(object):
     	#Filter out stop words
     	filterWords = set(stopwords.words('english'))
     	self.words = [word for word in self.words if not word in filterWords]
-    	#Stem words to reduce variance of words
-    	porter = PorterStemmer()
-    	self.words = [porter.stem(word) for word in self.words]
+    	#Lemmatize words to reduce variance
+    	lemmatizer = WordNetLemmatizer()
+    	self.words = [lemmatizer.lemmatize(word) for word in self.words]
     	return self.words
 
 
