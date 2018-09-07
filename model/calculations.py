@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import string
-#import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from autocorrect import spell
