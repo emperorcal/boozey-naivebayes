@@ -34,7 +34,7 @@ class Model(object):
     	#Clean review text, to allow for improved tokenisation
     	#Split into words by spaces
     	self.words = text.split()
-    	#Perfom spelling correction
+    	#Perform spelling correction
     	self.words = [spell(word) for word in self.words]
     	#Remove all punctuation
     	table = str.maketrans('', '', string.punctuation)
@@ -43,7 +43,7 @@ class Model(object):
     	self.words = [word for word in self.words if word.isalpha()]
     	#Make all lowercase
     	self.words = [word.lower() for word in self.words]
-    	#Filter out stop words
+    	#Filter out stop words (assuming English language)
     	filterWords = set(stopwords.words('english'))
     	self.words = [word for word in self.words if not word in filterWords]
     	#Lemmatize words to reduce variance
