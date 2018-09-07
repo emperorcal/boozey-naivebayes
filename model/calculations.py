@@ -13,6 +13,8 @@ class Model(object):
         self.beerDataframe = pd.read_csv(filePath)
 
     def splitData(self, testPercentage):
+        #Shuffle beer review dataframe
+        self.beerDataframe = self.beerDataframe.sample(frac=1)
     	#Split beer review dataframe into test and train dataframes by given proportion
         dataframeSize = self.beerDataframe.shape[0] - 1
         splitIndex = int(dataframeSize * (testPercentage/100))
@@ -21,13 +23,15 @@ class Model(object):
 
     def displayScore(self):
     	#Display bar chart of the grouping of scores (as ratio)
+        #Get unique score list
     	uniqueScores = self.trainBeerData.Score.unique()
     	for score in uniqueScores:
-    		uniqueScoreCount = pd.DataFrame(pd.value_counts(self.trainBeerData.Score.values, sort=score, normalize=True).reset_index())
+            #Get count of each unique score
+    		uniqueScoreCount = pd.DataFrame(pd.value_counts(self.trainBeerData.Score.values, sort=score).reset_index())
     		uniqueScoreCount.columns = ['score', 'count']
     		uniqueScoreCount = uniqueScoreCount.sort_values(by='score')
     		break
-    	uniqueScoreCount.plot.bar(x='score', y='count', rot=0, legend=False)
+    	uniqueScoreCount.plot.bar(x='score', y='count', rot=0, legend=False, title='Train Data Score Distribution')
     	plt.show()
 
     def cleanText(self, text):
