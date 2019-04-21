@@ -1,58 +1,71 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 import string
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from autocorrect import spell
 
+
 class Model(object):
-    def __init__(self, filePath):
-        #Load beer review data into dataframe
-        self.filePath = filePath
-        self.beerDataframe = pd.read_csv(filePath)
+	def __init__(self, file_path, file_path_dataset):
+		# Load beer review data into dataframe
+		self.file_path = file_path
+		self.file_path_dataset = file_path_dataset
+		self.beer_reviews = pd.read_csv(file_path_dataset)
 
-    def splitData(self, testPercentage):
-        #Shuffle beer review dataframe
-        self.beerDataframe = self.beerDataframe.sample(frac=1)
-    	#Split beer review dataframe into test and train dataframes by given proportion
-        dataframeSize = self.beerDataframe.shape[0] - 1
-        splitIndex = int(dataframeSize * (testPercentage/100))
-        self.testBeerData = self.beerDataframe.iloc[splitIndex:]
-        self.trainBeerData = self.beerDataframe.iloc[:splitIndex]
+		# Define other class variables
+		self.test_beer_reviews = None
+		self.train_beer_reviews = None
+		self.words = None
 
-    def displayScore(self):
-    	#Display bar chart of the grouping of scores (as ratio)
-        #Get unique score list
-    	uniqueScores = self.trainBeerData.Score.unique()
-    	for score in uniqueScores:
-            #Get count of each unique score
-    		uniqueScoreCount = pd.DataFrame(pd.value_counts(self.trainBeerData.Score.values, sort=score).reset_index())
-    		uniqueScoreCount.columns = ['score', 'count']
-    		uniqueScoreCount = uniqueScoreCount.sort_values(by='score')
-    		break
-    	uniqueScoreCount.plot.bar(x='score', y='count', rot=0, legend=False, title='Train Data Score Distribution')
-    	plt.show()
+	def split_data(self, test_percentage):
+		# Shuffle beer review dataframe
+		self.beer_reviews = self.beer_reviews.sample(frac=1)
+		# Split beer review dataframe into test and train dataframes by given proportion
+		dataframe_size = self.beer_reviews.shape[0] - 1
+		split_index = int(dataframe_size * (test_percentage / 100))
+		self.test_beer_reviews = self.beer_reviews.iloc[split_index:]
+		self.train_beer_reviews = self.beer_reviews.iloc[:split_index]
 
-    def cleanText(self, text):
-    	#Clean review text, to allow for improved tokenisation
-    	#Split into words by spaces
-    	self.words = text.split()
-    	#Perform spelling correction
-    	self.words = [spell(word) for word in self.words]
-    	#Remove all punctuation
-    	table = str.maketrans('', '', string.punctuation)
-    	self.words = [word.translate(table) for word in self.words]
-    	#Remove any non-alphabetic words
-    	self.words = [word for word in self.words if word.isalpha()]
-    	#Make all lowercase
-    	self.words = [word.lower() for word in self.words]
-    	#Filter out stop words (assuming English language)
-    	filterWords = set(stopwords.words('english'))
-    	self.words = [word for word in self.words if not word in filterWords]
-    	#Lemmatize words to reduce variance
-    	lemmatizer = WordNetLemmatizer()
-    	self.words = [lemmatizer.lemmatize(word) for word in self.words]
-    	return self.words
+	def clean_text(self, text):
+		# Clean review text, to allow for improved tokenisation
+		# Split into words by spaces
+		self.words = text.split()
+		# Perform spelling correction
+		self.words = [spell(word) for word in self.words]
+		# Remove all punctuation
+		table = str.maketrans('', '', string.punctuation)
+		self.words = [word.translate(table) for word in self.words]
+		# Remove any non-alphabetic words
+		self.words = [word for word in self.words if word.isalpha()]
+		# Make all lowercase
+		self.words = [word.lower() for word in self.words]
+		# Filter out stop words (assuming English language)
+		filter_words = set(stopwords.words('english'))
+		self.words = [word for word in self.words if word not in filter_words]
+		# Lemmatize words to reduce variance
+		lemmatizer = WordNetLemmatizer()
+		self.words = [lemmatizer.lemmatize(word) for word in self.words]
+		# Return one string rather than a list of words
+		self.words = ' '.join(self.words)
+		return self.words
 
+	def clean_dataframes(self):
+		print("Cleaning training dataframe...")
+		counter_loop = 0
+		for index, row in self.train_beer_reviews.iterrows():
+			print("{}/{} ({}%)".format(counter_loop + 1, self.train_beer_reviews.shape[0], ((counter_loop + 1) / self.train_beer_reviews.shape[0]) * 100))
+			counter_loop = counter_loop + 1
+			self.train_beer_reviews.at[index, 'Text'] = self.clean_text(row['Text'])
 
+		self.train_beer_reviews.to_csv(self.file_path + r'\train_beer_reviews_cleaned.csv', index=None, header=True)
 
+		print("Cleaning testing dataframe...")
+		counter_loop = 0
+		for index, row in self.test_beer_reviews.iterrows():
+			print("{}/{} ({}%)".format(counter_loop + 1, self.test_beer_reviews.shape[0], ((counter_loop + 1) / self.test_beer_reviews.shape[0]) * 100))
+			counter_loop = counter_loop + 1
+			self.test_beer_reviews.at[index, 'Text'] = self.clean_text(row['Text'])
+
+		self.test_beer_reviews.to_csv(self.file_path + r'\test_beer_reviews_cleaned.csv', index=None, header=True)
+
+		return None

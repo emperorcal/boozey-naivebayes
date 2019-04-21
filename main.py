@@ -1,17 +1,22 @@
-import pandas as pd
 from model.calculations import *
 
-#Filepath of dataset
-filePath = "data/beerReviews.csv"
-#Percentage of dataset for training
-testPercentage = 80
+# Filepath of dataset
+file_path_dataset = "data/beerReviews.csv"
+
+# Filepath of datafolder
+file_path = "data"
+
+# Percentage of dataset for training
+test_percentage = 80
 
 
-#Create the beer model
-beerModel = Model(filePath)
-#Split beer review data into Test and Train based on user input
-beerModel.splitData(testPercentage)
-#Display bar chart of Train score distribution
-beerModel.displayScore()
+# Create the beer model
+beer_model = Model(file_path, file_path_dataset)
+# Split beer review data into Test and Train based on user input
+beer_model.split_data(test_percentage)
 
-print(beerModel.cleanText("This a review of a beer calld Rosebeer. I thank it is rubbsh but it had a gud aroma!!! It's bettr than a fish that is fishin in a fishery."))
+print(beer_model.test_beer_reviews.head(5).Text)
+# Clean review text within test and train dataframe
+beer_model.clean_dataframes()
+
+print(beer_model.test_beer_reviews.head(5).Text)
