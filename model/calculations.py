@@ -80,3 +80,11 @@ class Model(object):
 		self.train_beer_reviews = pd.read_csv(self.file_path + r'\train_beer_reviews_cleaned.csv')
 		return None
 
+	def get_word_count(self, text, search_word):
+		# Split text into words based on whitespace
+		words = re.split('\s+', text)
+		# Use Counter to get count of specific word within text
+		word_count_list = Counter(words)
+		word_count = word_count_list.get(search_word, 0)
+		return word_count
+	
