@@ -3,6 +3,8 @@ import string
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from autocorrect import spell
+from collections import Counter
+import re
 
 
 class Model(object):
@@ -50,11 +52,13 @@ class Model(object):
 		return self.words
 
 	def clean_dataframes(self):
+		# Go through both dataframes and clan review text iteratively
 		print("Cleaning training dataframe...")
 		counter_loop = 0
 		for index, row in self.train_beer_reviews.iterrows():
 			print("{}/{} ({}%)".format(counter_loop + 1, self.train_beer_reviews.shape[0], ((counter_loop + 1) / self.train_beer_reviews.shape[0]) * 100))
 			counter_loop = counter_loop + 1
+			# Use clean_text() to clean review text
 			self.train_beer_reviews.at[index, 'Text'] = self.clean_text(row['Text'])
 
 		self.train_beer_reviews.to_csv(self.file_path + r'\train_beer_reviews_cleaned.csv', index=None, header=True)
@@ -64,8 +68,15 @@ class Model(object):
 		for index, row in self.test_beer_reviews.iterrows():
 			print("{}/{} ({}%)".format(counter_loop + 1, self.test_beer_reviews.shape[0], ((counter_loop + 1) / self.test_beer_reviews.shape[0]) * 100))
 			counter_loop = counter_loop + 1
+			# Use clean_text() to clean review text
 			self.test_beer_reviews.at[index, 'Text'] = self.clean_text(row['Text'])
 
 		self.test_beer_reviews.to_csv(self.file_path + r'\test_beer_reviews_cleaned.csv', index=None, header=True)
 
 		return None
+
+	def load_dataframes(self):
+		self.test_beer_reviews = pd.read_csv(self.file_path + r'\test_beer_reviews_cleaned.csv')
+		self.train_beer_reviews = pd.read_csv(self.file_path + r'\train_beer_reviews_cleaned.csv')
+		return None
+
