@@ -157,22 +157,34 @@ class Model(object):
 		return review_prediction
 
 	def negative_word_ranking(self):
+		# Show the top 25 words that have the highest probability of giving a negative score
+		# Create dataframe to store word and score
 		score_df = pd.DataFrame(columns=['word', 'score'])
+
+		# Counter to print when looping
 		counter = 1
 
+		# To save time, remove duplicated from negative word list
 		distinct_negative_words = list(dict.fromkeys(self.negative_review_words.split()))
 
+		# Loop through each negative word, calculate probability and insert into dataframe
 		for word in distinct_negative_words:
+			# Calculate probability
 			probability_word_given_negative = self.get_word_count(self.negative_review_words, word) / self.negative_review_word_count
-			probability_negative_given_word = (1 + (probability_word_given_negative * self.probability_negative))
+			probability_negative_given_word = (probability_word_given_negative * self.probability_negative)
+
+			# Store score in dataframe
 			temp_df = pd.DataFrame({'word': [word], 'score': [probability_negative_given_word]}, columns=score_df.keys())
 			score_df = score_df.append(temp_df)
+
+			# Print progress
 			print("{}/{}".format(counter, len(distinct_negative_words)))
 			counter = counter + 1
 
-		# Sort by score, remove duplicates and take top 10
-		score_df = score_df.sort_values(by=['score'], ascending=False).drop_duplicates(keep='first').head(10)
+		# Sort by score, remove duplicates and take top 25
+		score_df = score_df.sort_values(by=['score'], ascending=False).drop_duplicates(keep='first').head(25)
 
+		# Plot bar chart
 		data = [
 			go.Bar(
 				x=score_df['word'],
