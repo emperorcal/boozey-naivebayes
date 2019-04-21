@@ -8,6 +8,7 @@ import re
 import plotly.plotly as py
 import plotly.graph_objs as go
 from sklearn import metrics
+import csv
 
 
 class Model(object):
@@ -164,6 +165,14 @@ class Model(object):
 			predicted_scores.append(self.predict_review(row['Text']))
 			print("{}/{} {}%".format(counter, self.test_beer_reviews.shape[0], (counter / self.test_beer_reviews.shape[0])*100))
 			counter = counter + 1
+
+		# Merge scores and save to csv
+		merged_scores = tuple(zip(actual_scores, predicted_scores))
+
+		with open(self.file_path + r'\results.csv', 'w', newline='') as csvFile:
+			writer = csv.writer(csvFile)
+			writer.writerows(merged_scores)
+		csvFile.close()
 
 		# Generate the roc curve using scikit-learn.
 		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, actual_scores, pos_label=1)
