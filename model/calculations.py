@@ -183,10 +183,12 @@ class Model(object):
 			temp_df = pd.DataFrame({'word': [word], 'positive_probability': [probability_positive_given_word],
 					'negative_probability': [probability_negative_given_word]}, columns=self.word_probabilities.keys())
 			self.word_probabilities = self.word_probabilities.append(temp_df)
+
+			# Print progress
 			print("{} / {} {}%".format(counter, len(distinct_review_words), (counter / len(distinct_review_words))*100))
 			counter = counter + 1
-			if counter == 35:
-				break
+
+			# Write probabilities to CSV for future use
 			self.word_probabilities.to_csv(self.file_path + r'\word_probabilities.csv', index=None, header=True)
 
 		return None
