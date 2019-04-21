@@ -21,6 +21,7 @@ class Model(object):
 		# Define other class variables used in calculations
 		self.test_beer_reviews = None
 		self.train_beer_reviews = None
+		self.word_probabilities = None
 		self.words = None
 		self.number_of_reviews = None
 		self.negative_review_count = None
@@ -154,6 +155,41 @@ class Model(object):
 		else:
 			review_prediction = 1
 		return review_prediction
+
+	def calculate_word_probabilities(self):
+		# Calculate the probability of positive and negative scores for each word in the train dataframe
+		# Create dataframe to store all train words and calculated probabilities
+		self.word_probabilities = pd.DataFrame(columns=['word', 'positive_probability', 'negative_probability'])
+
+		# Get all train review words
+		review_words = self.negative_review_words + self.positive_review_words
+
+		# To save time, remove duplicated words
+		distinct_review_words = list(dict.fromkeys(review_words.split()))
+
+		# Counter
+		counter = 1
+
+		for word in distinct_review_words:
+			# Calculate negative probability
+			probability_word_given_negative = self.get_word_count(self.negative_review_words, word) / self.negative_review_word_count
+			probability_negative_given_word = (probability_word_given_negative * self.probability_negative)
+
+			# Calculate positive probability
+			probability_word_given_positive = self.get_word_count(self.positive_review_words, word) / self.positive_review_word_count
+			probability_positive_given_word = (probability_word_given_positive * self.probability_positive)
+
+			# Store word and probabilities in dataframe
+			temp_df = pd.DataFrame({'word': [word], 'positive_probability': [probability_positive_given_word],
+					'negative_probability': [probability_negative_given_word]}, columns=self.word_probabilities.keys())
+			self.word_probabilities = self.word_probabilities.append(temp_df)
+			print("{} / {} {}%".format(counter, len(distinct_review_words), (counter / len(distinct_review_words))*100))
+			counter = counter + 1
+			if counter == 35:
+				break
+			self.word_probabilities.to_csv(self.file_path + r'\word_probabilities.csv', index=None, header=True)
+
+		return None
 
 	def calculate_auc(self):
 		actual_scores = []
