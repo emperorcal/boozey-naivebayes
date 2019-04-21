@@ -14,10 +14,19 @@ class Model(object):
 		self.file_path_dataset = file_path_dataset
 		self.beer_reviews = pd.read_csv(file_path_dataset)
 
-		# Define other class variables
+		# Define other class variables used in calculations
 		self.test_beer_reviews = None
 		self.train_beer_reviews = None
 		self.words = None
+		self.number_of_reviews = None
+		self.negative_review_count = None
+		self.positive_review_count = None
+		self.negative_review_words = None
+		self.negative_review_word_count = None
+		self.positive_review_words = None
+		self.positive_review_word_count = None
+		self.probability_negative = None
+		self.probability_positive = None
 
 	def split_data(self, test_percentage):
 		# Shuffle beer review dataframe
@@ -75,9 +84,38 @@ class Model(object):
 
 		return None
 
+	def calculate_constants(self, dataset):
+		# Get total number of reviews from training dataframe
+		self.number_of_reviews = dataset.shape[0]
+
+		# Calculate number of negative reviews from training dataframe
+		self.negative_review_count = dataset.loc[dataset['Category Score'] == -1].shape[0]
+
+		# Calculate number of positive reviews
+		self.positive_review_count = dataset.loc[dataset['Category Score'] == 1].shape[0]
+
+		# Group all negative review words and count
+		self.negative_review_words = " ".join([row[3].lower() for index, row in dataset.iterrows() if row[0] == -1])
+		self.negative_review_word_count = len(self.negative_review_words.split())
+
+		# Group all positive review words and count
+		self.positive_review_words = " ".join([row[3].lower() for index, row in dataset.iterrows() if row[0] == 1])
+		self.positive_review_word_count = len(self.positive_review_words.split())
+
+		# Probability of a word being negative
+		self.probability_negative = self.negative_review_count / self.number_of_reviews
+
+		# Probability of a word being positive
+		self.probability_positive = self.positive_review_count / self.number_of_reviews
+		return None
+
 	def load_dataframes(self):
+		# Load beer reviews with cleansed review text
 		self.test_beer_reviews = pd.read_csv(self.file_path + r'\test_beer_reviews_cleaned.csv')
 		self.train_beer_reviews = pd.read_csv(self.file_path + r'\train_beer_reviews_cleaned.csv')
+
+		# Calculate constants with training dataset
+		self.calculate_constants(self.train_beer_reviews)
 		return None
 
 	def get_word_count(self, text, search_word):
@@ -87,4 +125,31 @@ class Model(object):
 		word_count_list = Counter(words)
 		word_count = word_count_list.get(search_word, 0)
 		return word_count
-	
+
+	def predict_review(self, review):
+		# Assign arbitrary base value for multiplication
+		probability_negative_review = 1
+		probability_positive_review = 1
+
+		# Clean review text
+		review = self.clean_text(review)
+
+		# Loop through each word in the review and calculate the likelihood of both being negative and positive review
+		for word in review.split():
+			probability_word_given_negative = self.get_word_count(self.negative_review_words, word) / self.negative_review_word_count
+			probability_word_given_positive = self.get_word_count(self.positive_review_words, word) / self.positive_review_word_count
+
+			# Use Naive Bayes Classifier with additive smoothing (with denominator removed)
+			probability_negative_given_word = (1 + (probability_word_given_negative * self.probability_negative))
+			probability_positive_given_word = (1 + (probability_word_given_positive * self.probability_positive))
+
+			# Multiply this probability with the other word probabilities within review
+			probability_negative_review *= probability_negative_given_word
+			probability_positive_review *= probability_positive_given_word
+
+		# Assign a classification based on which probability is greater
+		if probability_negative_review > probability_positive_review:
+			review_prediction = -1
+		else:
+			review_prediction = 1
+		return review_prediction
