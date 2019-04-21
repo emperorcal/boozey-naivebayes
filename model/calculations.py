@@ -193,6 +193,11 @@ class Model(object):
 
 		return None
 
+	def load_word_probabilities(self):
+		# Load training word probabilities into dataframe
+		self.word_probabilities = pd.read_csv(self.file_path + r'\word_probabilities.csv')
+		return None
+
 	def calculate_auc(self):
 		actual_scores = []
 		predicted_scores = []
