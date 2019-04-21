@@ -7,6 +7,7 @@ from collections import Counter
 import re
 import plotly.plotly as py
 import plotly.graph_objs as go
+from sklearn import metrics
 
 
 class Model(object):
@@ -133,9 +134,6 @@ class Model(object):
 		probability_negative_review = 1
 		probability_positive_review = 1
 
-		# Clean review text
-		review = self.clean_text(review)
-
 		# Loop through each word in the review and calculate the likelihood of both being negative and positive review
 		for word in review.split():
 			probability_word_given_negative = self.get_word_count(self.negative_review_words, word) / self.negative_review_word_count
@@ -155,6 +153,25 @@ class Model(object):
 		else:
 			review_prediction = 1
 		return review_prediction
+
+	def calculate_auc(self):
+		actual_scores = []
+		predicted_scores = []
+		counter = 1
+
+		for index, row in self.test_beer_reviews.iterrows():
+			actual_scores.append(row['Category Score'])
+			predicted_scores.append(self.predict_review(row['Text']))
+			print("{}/{} {}%".format(counter, self.test_beer_reviews.shape[0], (counter / self.test_beer_reviews.shape[0])*100))
+			counter = counter + 1
+
+		# Generate the roc curve using scikit-learn.
+		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, actual_scores, pos_label=1)
+
+		# Calculate AUC (area under curve) - closer to 1, the "better" the predictions
+		auc_value = metrics.auc(fpr, tpr)
+		print("AUC of the predictions: {0}".format(metrics.auc(fpr, tpr)))
+		return auc_value
 
 	def negative_word_ranking(self):
 		# Show the top 25 words that have the highest probability of giving a negative score

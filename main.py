@@ -21,4 +21,4 @@ beer_model = Model(file_path, file_path_dataset)
 # Load cleaned dataframes
 beer_model.load_dataframes()
 
-beer_model.negative_word_ranking()
+beer_model.calculate_auc()
