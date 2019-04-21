@@ -5,6 +5,8 @@ from nltk.stem import WordNetLemmatizer
 from autocorrect import spell
 from collections import Counter
 import re
+import plotly.plotly as py
+import plotly.graph_objs as go
 
 
 class Model(object):
@@ -153,3 +155,36 @@ class Model(object):
 		else:
 			review_prediction = 1
 		return review_prediction
+
+	def negative_word_ranking(self):
+		score_df = pd.DataFrame(columns=['word', 'score'])
+		counter = 1
+
+		distinct_negative_words = list(dict.fromkeys(self.negative_review_words.split()))
+
+		for word in distinct_negative_words:
+			probability_word_given_negative = self.get_word_count(self.negative_review_words, word) / self.negative_review_word_count
+			probability_negative_given_word = (1 + (probability_word_given_negative * self.probability_negative))
+			temp_df = pd.DataFrame({'word': [word], 'score': [probability_negative_given_word]}, columns=score_df.keys())
+			score_df = score_df.append(temp_df)
+			print("{}/{}".format(counter, len(distinct_negative_words)))
+			counter = counter + 1
+
+		# Sort by score, remove duplicates and take top 10
+		score_df = score_df.sort_values(by=['score'], ascending=False).drop_duplicates(keep='first').head(10)
+
+		data = [
+			go.Bar(
+				x=score_df['word'],
+				y=score_df['score']
+			)
+		]
+
+		layout = go.Layout(
+			title='Words most likely to produce a negative beer review'
+		)
+
+		fig = go.Figure(data=data, layout=layout)
+
+		py.iplot(fig, filename='negative-words-bar-chart')
+		return None

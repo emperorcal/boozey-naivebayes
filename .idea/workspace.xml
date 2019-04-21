@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/calculations.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="89">
-              <caret line="142" column="93" lean-forward="true" selection-start-line="142" selection-start-column="93" selection-end-line="142" selection-end-column="93" />
+            <state relative-caret-position="55">
+              <caret line="162" column="89" selection-start-line="162" selection-start-column="89" selection-end-line="162" selection-end-column="89" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -28,8 +28,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="392">
-              <caret line="24" selection-start-line="24" selection-end-line="24" />
+            <state relative-caret-position="375">
+              <caret line="23" column="34" lean-forward="true" selection-start-line="23" selection-start-column="34" selection-end-line="23" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -43,8 +43,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/data/csvProcess.py" />
-        <option value="$PROJECT_DIR$/model/calculations.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/model/calculations.py" />
       </list>
     </option>
   </component>
@@ -200,15 +200,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        <state relative-caret-position="375">
+          <caret line="23" column="34" lean-forward="true" selection-start-line="23" selection-start-column="34" selection-end-line="23" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/calculations.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="89">
-          <caret line="142" column="93" lean-forward="true" selection-start-line="142" selection-start-column="93" selection-end-line="142" selection-end-column="93" />
+        <state relative-caret-position="55">
+          <caret line="162" column="89" selection-start-line="162" selection-start-column="89" selection-end-line="162" selection-end-column="89" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

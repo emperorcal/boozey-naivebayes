@@ -21,4 +21,4 @@ beer_model = Model(file_path, file_path_dataset)
 # Load cleaned dataframes
 beer_model.load_dataframes()
 
-print(beer_model.predict_review("I loved this beer, it was tasty and delicious"))
+beer_model.negative_word_ranking()
