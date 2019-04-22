@@ -138,20 +138,26 @@ class Model(object):
 
 		# Loop through each word in the review and calculate the likelihood of both being negative and positive review
 		for word in review.split():
-			probability_word_given_negative = self.get_word_count(self.negative_review_words, word) / self.negative_review_word_count
-			probability_word_given_positive = self.get_word_count(self.positive_review_words, word) / self.positive_review_word_count
+			# Lookup word in calculated probabilities dataframe
+			temp_df = self.word_probabilities.loc[self.word_probabilities['word'] == word]
+			# If word exists in train dataframe
+			if temp_df.shape[0] != 0:
+				probability_word_given_positive = temp_df.iloc[0]['positive_probability']
+				probability_word_given_negative = temp_df.iloc[0]['negative_probability']
 
-			# Use Naive Bayes Classifier with additive smoothing (and denominator removed)
-			probability_negative_given_word = (1 + (probability_word_given_negative * self.probability_negative))
-			probability_positive_given_word = (1 + (probability_word_given_positive * self.probability_positive))
+				# Use Naive Bayes Classifier with additive smoothing (and denominator removed)
+				probability_negative_given_word = (1 + (probability_word_given_negative * self.probability_negative))
+				probability_positive_given_word = (1 + (probability_word_given_positive * self.probability_positive))
 
-			# Multiply this probability with the other word probabilities within review
-			probability_negative_review *= probability_negative_given_word
-			probability_positive_review *= probability_positive_given_word
+				# Multiply this probability with the other word probabilities within review
+				probability_negative_review *= probability_negative_given_word
+				probability_positive_review *= probability_positive_given_word
 
 		# Assign a classification based on which probability is greater
 		if probability_negative_review > probability_positive_review:
 			review_prediction = -1
+		elif probability_negative_review == probability_positive_review:
+			review_prediction = 0
 		else:
 			review_prediction = 1
 		return review_prediction
