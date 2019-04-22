@@ -193,7 +193,6 @@ class Model(object):
 			# Calculate positive probability
 			probability_word_given_positive = self.get_word_count(self.positive_review_words, word) / self.positive_review_word_count
 
-
 			# Store word and probabilities in dataframe
 			temp_df = pd.DataFrame({'word': [word], 'positive_probability': [probability_word_given_positive],
 					'negative_probability': [probability_word_given_negative]}, columns=self.word_probabilities.keys())
@@ -203,8 +202,8 @@ class Model(object):
 			print("{} / {} {}%".format(counter, len(distinct_review_words), (counter / len(distinct_review_words))*100))
 			counter = counter + 1
 
-			# Write probabilities to CSV for future use
-			self.word_probabilities.to_csv(self.file_path + r'\word_probabilities.csv', index=None, header=True)
+		# Write probabilities to CSV for future use
+		self.word_probabilities.to_csv(self.file_path + r'\word_probabilities.csv', index=None, header=True)
 
 		return None
 
