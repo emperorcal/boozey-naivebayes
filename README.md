@@ -50,12 +50,21 @@ Due to the large dataset, the process was broken down into stages to assist with
 # Class Methods
 
 
-| Method                                           | Description                          | 
+| Method                                          | Description                          | 
 | :-----------------------------------------------|:------------------------------------| 
-| \_\_init\_\_(file_path, file_path_dataset)           |                                      |
+| \_\_init\_\_(file_path, file_path_dataset)      |                                      |
 | split_data(test_percentage)                      |                                      |
 | clean_text(text)                                 |                                      |
 | clean_dataframes()                               |                                      | 
+| calculate_constants(dataset)                     |                                      |
+| load_dataframes()                                |                                      |
+| get_word_count(text, search_word)                |                                      |
+| predict_review(review)                           |                                      |
+| calculate_word_probabilities()                   |                                      |
+| load_word_probabilities()                        |                                      |
+| calculate_auc()                                  |                                      |
+| negative_word_ranking()                          |                                      |
+| positive_word_ranking()                          |                                      |
 
 # Results
 * [ROC curves on same axes]
