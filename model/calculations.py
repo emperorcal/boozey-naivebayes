@@ -107,11 +107,12 @@ class Model(object):
 		self.positive_review_words = " ".join([row[3].lower() for index, row in dataset.iterrows() if row[0] == 1])
 		self.positive_review_word_count = len(self.positive_review_words.split())
 
-		# Probability of a word being negative
-		self.probability_negative = self.negative_review_count / self.number_of_reviews
+		# Probability of a review being negative
+		self.probability_review_negative = self.negative_review_count / self.number_of_reviews
 
-		# Probability of a word being positive
-		self.probability_positive = self.positive_review_count / self.number_of_reviews
+		# Probability of a review being positive
+		self.probability_review_positive = self.positive_review_count / self.number_of_reviews
+		print("Probability word positive: {}, probability word negative:{}".format(self.probability_review_positive, self.probability_review_negative))
 		return None
 
 	def load_dataframes(self):
@@ -145,13 +146,20 @@ class Model(object):
 				probability_word_given_positive = temp_df.iloc[0]['positive_probability']
 				probability_word_given_negative = temp_df.iloc[0]['negative_probability']
 
-				# Use Naive Bayes Classifier with additive smoothing (and denominator removed)
-				probability_negative_given_word = (1 + (probability_word_given_negative * self.probability_negative))
-				probability_positive_given_word = (1 + (probability_word_given_positive * self.probability_positive))
+				# Apply additive smoothing
+				probability_negative_given_word = 1 + probability_word_given_negative
+				probability_positive_given_word = 1 + probability_word_given_positive
+
+				print(" -ve: {}".format(probability_negative_given_word))
+				print(" +ve: {}".format(probability_positive_given_word))
 
 				# Multiply this probability with the other word probabilities within review
 				probability_negative_review *= probability_negative_given_word
 				probability_positive_review *= probability_positive_given_word
+
+		# Multiply class probability
+		probability_negative_review *= self.probability_review_negative
+		probability_positive_review *= self.probability_review_positive
 
 		# Assign a classification based on which probability is greater
 		if probability_negative_review > probability_positive_review:
@@ -160,6 +168,8 @@ class Model(object):
 			review_prediction = 0
 		else:
 			review_prediction = 1
+
+		print("'{}'-ve vs. '{}'+ve, score:{}".format(probability_negative_review, probability_positive_review, review_prediction ))
 		return review_prediction
 
 	def calculate_word_probabilities(self):
@@ -179,15 +189,14 @@ class Model(object):
 		for word in distinct_review_words:
 			# Calculate negative probability
 			probability_word_given_negative = self.get_word_count(self.negative_review_words, word) / self.negative_review_word_count
-			probability_negative_given_word = (probability_word_given_negative * self.probability_negative)
 
 			# Calculate positive probability
 			probability_word_given_positive = self.get_word_count(self.positive_review_words, word) / self.positive_review_word_count
-			probability_positive_given_word = (probability_word_given_positive * self.probability_positive)
+
 
 			# Store word and probabilities in dataframe
-			temp_df = pd.DataFrame({'word': [word], 'positive_probability': [probability_positive_given_word],
-					'negative_probability': [probability_negative_given_word]}, columns=self.word_probabilities.keys())
+			temp_df = pd.DataFrame({'word': [word], 'positive_probability': [probability_word_given_positive],
+					'negative_probability': [probability_word_given_negative]}, columns=self.word_probabilities.keys())
 			self.word_probabilities = self.word_probabilities.append(temp_df)
 
 			# Print progress
