@@ -8,6 +8,8 @@ import re
 import plotly.plotly as py
 import plotly.graph_objs as go
 from sklearn import metrics
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.feature_extraction.text import CountVectorizer
 import csv
 
 
@@ -232,11 +234,25 @@ class Model(object):
 		csvFile.close()
 
 		# Generate the roc curve using scikit-learn.
-		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, actual_scores, pos_label=1)
+		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, predicted_scores, pos_label=1)
 
 		# Calculate AUC (area under curve) - closer to 1, the "better" the predictions
 		auc_value = metrics.auc(fpr, tpr)
-		print("AUC of the predictions: {0}".format(metrics.auc(fpr, tpr)))
+		print("AUC of the Classifier: {0}".format(metrics.auc(fpr, tpr)))
+
+		# Calculate AUC using Scikit
+		vectorizer = CountVectorizer(stop_words='english')
+		train_features = vectorizer.fit_transform([row['Text'] for index, row in self.train_beer_reviews.iterrows()])
+		test_features = vectorizer.transform([row['Text'] for index, row in self.test_beer_reviews.iterrows()])
+
+		nb = MultinomialNB()
+		nb.fit(train_features, [int(row['Category Score']) for index, row in self.train_beer_reviews.iterrows()])
+
+		predictions = nb.predict(test_features)
+
+		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, predictions,
+		                                         pos_label=1)
+		print("Scikit Multinomial naive bayes AUC: {0}".format(metrics.auc(fpr, tpr)))
 		return auc_value
 
 	def negative_word_ranking(self):
