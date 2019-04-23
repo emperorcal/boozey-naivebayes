@@ -1,7 +1,7 @@
 # Summary
 A Naïve Bayes classifier build from scratch in Python aimed at predicting either a positive or negative beer review based on beer review text, using natural language processing (NLP).
 
-The overall number of beer reviews in the dataset is 33047, with an 80/20 split for training and test (26437 train / 6610 test reviews).
+The overall number of beer reviews in the dataset is 31079, with an 80/20 split for training and testing (24863 train / 6216 test reviews).
 
 AUC of X was achieved with the classifier versus an AUC of Y using Scikit multi NB.
 
