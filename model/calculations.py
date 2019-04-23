@@ -114,7 +114,9 @@ class Model(object):
 
 		# Probability of a review being positive
 		self.probability_review_positive = self.positive_review_count / self.number_of_reviews
-		print("Probability word positive: {}, probability word negative:{}".format(self.probability_review_positive, self.probability_review_negative))
+		print("Probability review positive: {}, probability review negative:{}".format(self.probability_review_positive, self.probability_review_negative))
+		print("Number of reviews: {}, Negative review count:{}, Positive review count:{}".format(self.number_of_reviews, self.negative_review_count, self.positive_review_count))
+		print("Negative review count: {}, Positive review count:{}".format(self.negative_review_word_count, self.positive_review_word_count))
 		return None
 
 	def load_dataframes(self):

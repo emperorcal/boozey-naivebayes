@@ -22,8 +22,8 @@ beer_model = Model(file_path, file_path_dataset)
 beer_model.load_dataframes()
 
 # Load calculated word probabilities
-beer_model.calculate_word_probabilities()
+# beer_model.calculate_word_probabilities()
 
 #print(len(beer_model.negative_review_words))
 #print(len(beer_model.positive_review_words))
-beer_model.calculate_auc()
+# beer_model.calculate_auc()
