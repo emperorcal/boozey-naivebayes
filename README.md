@@ -91,6 +91,7 @@ Top 20 positive and negative words:
 
 # Areas for improvement
 * Improved review cleansing
+    * splitting words with dashes, currently processed as block, e.g. "after-taste" goes to "aftertaste" after text cleaning
     * removing words that occur frequently in both positive and negative reviews
     * grouping words that are relevant to each other in the context of beer, e.g. aroma / smell / scent
 * Using N-grams
