@@ -241,16 +241,25 @@ class Model(object):
 		# Loop through test dataframe and store actual and predicted into separate lists
 		for index, row in self.test_beer_reviews.iterrows():
 			actual_scores.append(row['Category Score'])
+
+			# Predict score and append to list
 			predicted_score = self.predict_review(row['Text'])
 			predicted_scores.append(predicted_score)
+
+			# Print progress
+			print("{}/{} {}%".format(counter, self.test_beer_reviews.shape[0], (counter / self.test_beer_reviews.shape[0])*100))
 			counter = counter + 1
 
 		# Merge actual and predicted into list
 		merged_scores = tuple(zip(actual_scores, predicted_scores))
 
+		# Set headers for CSV
+		headers = ['actual','predicted']
+
 		# Save merged list into CSV
 		with open(self.file_path + r'\results.csv', 'w', newline='') as csvFile:
 			writer = csv.writer(csvFile)
+			writer.writerow(headers)
 			writer.writerows(merged_scores)
 		csvFile.close()
 
