@@ -3,7 +3,7 @@ A Naïve Bayes classifier build from scratch in Python aimed at predicting eithe
 
 The overall number of beer reviews in the dataset is 31079, with an 80/20 split for training and testing (24863 train / 6216 test reviews).
 
-AUC of X was achieved with the classifier versus an AUC of Y using Scikit multi NB.
+AUC of 0.797 was achieved with the classifier versus an AUC of 0.917 using Scikit multi NB.
 
 # Theory
 Bayes’ law is a ubiquitous mathematical theorem describing the probability of an event, based on prior knowledge of conditions (potentially) related to the event. Given by:
@@ -62,7 +62,9 @@ Due to the large dataset, the process was broken down into stages to assist with
 | predict_review(review)                           |                                      |
 | calculate_word_probabilities()                   |                                      |
 | load_word_probabilities()                        |                                      |
-| calculate_auc()                                  |                                      |
+| calculate_auc_classifier()                       |                                      |
+| calculate_auc_scikit()                           |                                      |
+| plot_roc()                                       |                                      |
 | negative_word_ranking()                          |                                      |
 | positive_word_ranking()                          |                                      |
 
