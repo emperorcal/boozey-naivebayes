@@ -306,15 +306,25 @@ class Model(object):
 		return self.auc_value_scikit
 
 	def plot_roc(self):
+		# Plot ROC for the classifier and the scikit Multi NB
+		# Format title
 		plt.title('Receiver Operating Characteristic - Classifier vs. Scikit Multi NB')
-		plt.plot(self.fpr_classifier, self.tpr_classifier, 'b', label = 'Classifier AUC = %0.2f' % self.auc_value_classifer)
-		plt.plot(self.fpr_scikit, self.tpr_scikit, 'b', label = 'Scikit AUC = %0.2f' % self.auc_value_scikit)
+
+		# Plot classifier characteristics
+		plt.plot(self.fpr_classifier, self.tpr_classifier, 'b', label = 'Classifier AUC = %0.2f' % self.auc_value_classifier)
+
+		# Plot scikit multi NB characteristics
+		plt.plot(self.fpr_scikit, self.tpr_scikit, 'g', label = 'Scikit AUC = %0.2f' % self.auc_value_scikit)
+
+		# Format plot
 		plt.legend(loc = 'lower right')
 		plt.plot([0, 1], [0, 1],'r--')
 		plt.xlim([0, 1])
 		plt.ylim([0, 1])
 		plt.ylabel('True Positive Rate')
 		plt.xlabel('False Positive Rate')
+
+		# Display plot
 		plt.show()
 		return None
 

@@ -20,3 +20,6 @@ beer_model.calculate_auc_classifier()
 
 # Calculate AUC of classifier
 beer_model.calculate_auc_scikit()
+
+#Plot ROC curves
+beer_model.plot_roc()
