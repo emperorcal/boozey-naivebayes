@@ -102,4 +102,9 @@ ENV/
 
 # data
 data/
+
+# word documents
 *.docx
+
+#py charm
+**/.idea/workspace.xml **/.idea/tasks.xml

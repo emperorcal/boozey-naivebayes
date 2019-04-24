@@ -16,7 +16,7 @@ beer_model.load_dataframes()
 beer_model.load_word_probabilities()
 
 # Calculate AUC of classifier
-#beer_model.calculate_auc_classifier()
+beer_model.calculate_auc_classifier()
 
 # Calculate AUC of classifier
 beer_model.calculate_auc_scikit()
