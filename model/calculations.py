@@ -38,9 +38,13 @@ class Model(object):
 	def split_data(self, test_percentage):
 		# Shuffle beer review dataframe
 		self.beer_reviews = self.beer_reviews.sample(frac=1)
-		# Split beer review dataframe into test and train dataframes by given proportion
+
+		# Split beer review dataframe into test and train dataframes by given proportion (as percentage)
+		# Calculate index number to split at given proportion
 		dataframe_size = self.beer_reviews.shape[0] - 1
 		split_index = int(dataframe_size * (test_percentage / 100))
+
+		# Split dataframe into test and train based on calculated index value
 		self.test_beer_reviews = self.beer_reviews.iloc[split_index:]
 		self.train_beer_reviews = self.beer_reviews.iloc[:split_index]
 
@@ -68,12 +72,14 @@ class Model(object):
 		return self.words
 
 	def clean_dataframes(self):
-		# Go through both dataframes and clan review text iteratively
+		# Go through both dataframes and clan review text iteratively, saing to CSV
+		# Inform user of progress
 		print("Cleaning training dataframe...")
-		counter_loop = 0
+
+		counter = 0
 		for index, row in self.train_beer_reviews.iterrows():
 			print("{}/{} ({}%)".format(counter_loop + 1, self.train_beer_reviews.shape[0], ((counter_loop + 1) / self.train_beer_reviews.shape[0]) * 100))
-			counter_loop = counter_loop + 1
+			counter = counter+ 1
 			# Use clean_text() to clean review text
 			self.train_beer_reviews.at[index, 'Text'] = self.clean_text(row['Text'])
 
@@ -92,6 +98,7 @@ class Model(object):
 		return None
 
 	def calculate_constants(self, dataset):
+		# Calculate constants from the input dataset required for the Naive Bayes classifier
 		# Get total number of reviews from training dataframe
 		self.number_of_reviews = dataset.shape[0]
 
@@ -114,21 +121,25 @@ class Model(object):
 
 		# Probability of a review being positive
 		self.probability_review_positive = self.positive_review_count / self.number_of_reviews
+
+		# Inform user of Naive Bayes constants based on train dataframe
 		print("Probability review positive: {}, probability review negative:{}".format(self.probability_review_positive, self.probability_review_negative))
 		print("Number of reviews: {}, Negative review count:{}, Positive review count:{}".format(self.number_of_reviews, self.negative_review_count, self.positive_review_count))
-		print("Negative review count: {}, Positive review count:{}".format(self.negative_review_word_count, self.positive_review_word_count))
+		print("Negative review word count: {}, Positive review word count:{}".format(self.negative_review_word_count, self.positive_review_word_count))
 		return None
 
 	def load_dataframes(self):
+		# Load test and train dataframes from CSV
 		# Load beer reviews with cleansed review text
 		self.test_beer_reviews = pd.read_csv(self.file_path + r'\test_beer_reviews_cleaned.csv')
 		self.train_beer_reviews = pd.read_csv(self.file_path + r'\train_beer_reviews_cleaned.csv')
 
-		# Calculate constants with training dataset
+		# Calculate constants with training dataset to be used when predicting reviews
 		self.calculate_constants(self.train_beer_reviews)
 		return None
 
 	def get_word_count(self, text, search_word):
+		# Get count of substring within text
 		# Split text into words based on whitespace
 		words = re.split('\s+', text)
 		# Use Counter to get count of specific word within text
@@ -137,31 +148,30 @@ class Model(object):
 		return word_count
 
 	def predict_review(self, review):
+		# Take review text and return prediction using Naive Bayes classifier
 		# Assign arbitrary base value for multiplication
 		probability_negative_review = 1
 		probability_positive_review = 1
 
-		# Loop through each word in the review and calculate the likelihood of both being negative and positive review
+		# Loop through each word in the review and calculate the likelihood of being negative and positive review
 		for word in review.split():
 			# Lookup word in calculated probabilities dataframe
 			temp_df = self.word_probabilities.loc[self.word_probabilities['word'] == word]
 			# If word exists in train dataframe
 			if temp_df.shape[0] != 0:
+				# Store positive and negative probability of word
 				probability_word_given_positive = temp_df.iloc[0]['positive_probability']
 				probability_word_given_negative = temp_df.iloc[0]['negative_probability']
 
-				# Apply additive smoothing
+				# Apply additive smoothing (in case a word has zero probability)
 				probability_negative_given_word = 1 + probability_word_given_negative
 				probability_positive_given_word = 1 + probability_word_given_positive
 
-				print(" -ve: {}".format(probability_negative_given_word))
-				print(" +ve: {}".format(probability_positive_given_word))
-
-				# Multiply this probability with the other word probabilities within review
+				# Multiply positive and negative word probability with the other word probabilities within review
 				probability_negative_review *= probability_negative_given_word
 				probability_positive_review *= probability_positive_given_word
 
-		# Multiply class probability
+		# Multiply by class probability
 		probability_negative_review *= self.probability_review_negative
 		probability_positive_review *= self.probability_review_positive
 
@@ -172,8 +182,7 @@ class Model(object):
 			review_prediction = 0
 		else:
 			review_prediction = 1
-
-		print("'{}'-ve vs. '{}'+ve, score:{}".format(probability_negative_review, probability_positive_review, review_prediction ))
+		
 		return review_prediction
 
 	def calculate_word_probabilities(self):
@@ -184,19 +193,25 @@ class Model(object):
 		# Get all train review words
 		review_words = self.negative_review_words + self.positive_review_words
 
+		# Inform user of count of total words in train dataframe
+		print("Count of total words: {}".format(len(review_words)))
+
 		# To save time, remove duplicated words
 		distinct_review_words = list(dict.fromkeys(review_words.split()))
 
-		# Counter
+		# Inform user of count of total distinct words in train dataframe
+		print("Count of total distinct words: {}".format(len(distinct_review_words)))
+
+		# Counter to display progress
 		counter = 1
 
 		for word in distinct_review_words:
 			# Calculate negative probability
 			probability_word_given_negative = self.get_word_count(self.negative_review_words, word) / self.negative_review_word_count
-
+			
 			# Calculate positive probability
 			probability_word_given_positive = self.get_word_count(self.positive_review_words, word) / self.positive_review_word_count
-
+			
 			# Store word and probabilities in dataframe
 			temp_df = pd.DataFrame({'word': [word], 'positive_probability': [probability_word_given_positive],
 					'negative_probability': [probability_word_given_negative]}, columns=self.word_probabilities.keys())
@@ -216,20 +231,24 @@ class Model(object):
 		self.word_probabilities = pd.read_csv(self.file_path + r'\word_probabilities.csv')
 		return None
 
-	def calculate_auc(self):
+	def calculate_auc_classifier(self):
+		# Calculate AUC of classifier
+		# Create lists to be used by scikit to calculate AUC
 		actual_scores = []
 		predicted_scores = []
 		counter = 1
 
+		# Loop through test dataframe and store actual and predicted into separate lists
 		for index, row in self.test_beer_reviews.iterrows():
 			actual_scores.append(row['Category Score'])
-			predicted_scores.append(self.predict_review(row['Text']))
-			print("{}/{} {}%".format(counter, self.test_beer_reviews.shape[0], (counter / self.test_beer_reviews.shape[0])*100))
+			predicted_score = self.predict_review(row['Text'])
+			predicted_scores.append(predicted_score)
 			counter = counter + 1
 
-		# Merge scores and save to csv
+		# Merge actual and predicted into list
 		merged_scores = tuple(zip(actual_scores, predicted_scores))
 
+		# Save merged list into CSV
 		with open(self.file_path + r'\results.csv', 'w', newline='') as csvFile:
 			writer = csv.writer(csvFile)
 			writer.writerows(merged_scores)
@@ -241,19 +260,30 @@ class Model(object):
 		# Calculate AUC (area under curve) - closer to 1, the "better" the predictions
 		auc_value = metrics.auc(fpr, tpr)
 		print("AUC of the Classifier: {0}".format(metrics.auc(fpr, tpr)))
+		return auc_value
 
+	def calculate_auc_scikit(self):
 		# Calculate AUC using Scikit
+		# Use Vecotrizer to split words into features
 		vectorizer = CountVectorizer(stop_words='english')
 		train_features = vectorizer.fit_transform([row['Text'] for index, row in self.train_beer_reviews.iterrows()])
 		test_features = vectorizer.transform([row['Text'] for index, row in self.test_beer_reviews.iterrows()])
 
+		# Create Multinomial Naive Bayes model and fit train data
 		nb = MultinomialNB()
 		nb.fit(train_features, [int(row['Category Score']) for index, row in self.train_beer_reviews.iterrows()])
 
+		# Make predictions on test data
 		predictions = nb.predict(test_features)
 
-		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, predictions,
-		                                         pos_label=1)
+		# Get actual scores from Test dataframe
+		actual_scores = self.test_beer_reviews['Category Score'].tolist()
+
+		# Generate the roc curve using scikit-learn.
+		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, predictions, pos_label=1)
+
+		# Calculate AUC (area under curve) - closer to 1, the "better" the predictions
+		auc_value = metrics.auc(fpr, tpr)
 		print("Scikit Multinomial naive bayes AUC: {0}".format(metrics.auc(fpr, tpr)))
 		return auc_value
 
