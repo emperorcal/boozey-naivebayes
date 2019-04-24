@@ -8,7 +8,7 @@ AUC of 0.797 was achieved with the classifier versus an AUC of 0.917 using Sciki
 # Theory
 Bayes’ law is a ubiquitous mathematical theorem describing the probability of an event, based on prior knowledge of conditions (potentially) related to the event. Given by:
 <p align="center">
-  <img height="50" src="https://i.imgur.com/Ag0V9up.png">
+  <img height="40" src="https://i.imgur.com/Ag0V9up.png">
 </p>
 We get to the Naïve Bayes classifier by adopting the ‘naïve’ assumption that all of the features are independent. For example, a banana has several ‘features’ – yellow in colour, slightly curved, slippery once peeled. When calculating the probability of an object being a banana, a Naïve Bayes classifier would assume that each feature independently accounts for the probability of being a banana.
 
@@ -30,25 +30,31 @@ To avoid issues with unseen words in future predictions, Laplace smoothing (also
 </p>
 To simplify calculations, the class probability can be brought out to give the final equation:
 <p align="center">
-  <img height="70" src="https://i.imgur.com/55SA2Jm.png">
+  <img height="80" src="https://i.imgur.com/55SA2Jm.png">
 </p>
 To evaluate the output quality of the classifier, the Receiver Operating Characteristic (ROC) metric is used. Visualised graphically, the ROC curve shows the relationship between the True Positive Rate (TPR) and the False Positive Rate (FPR).
 <p align="center">
-  <img height="30" src="https://i.imgur.com/J7dBI9K.png">
+  <img height="40" src="https://i.imgur.com/J7dBI9K.png">
 </p>
 <p align="center">
-  <img height="30" src="https://i.imgur.com/bJcHu1z.png">
+  <img height="40" src="https://i.imgur.com/bJcHu1z.png">
 </p>
-Area Under the Curve (AUC) is a metric that calculates the area under the ROC curve, a single value of 0 to 1, with 1 being most desirable. This metric is also used to assess the quality of the classifier.
+Area Under the Curve (AUC) is a metric that calculates the area under the ROC curve, a single value of 0 to 1, with 1 being the most desirable. This metric is also used to assess the quality of the classifier.
 
 # Process
 Due to the large dataset, the process was broken down into stages to assist with computation time:
 <p align="center">
-  <img height="160" src="https://i.imgur.com/oOubYpp.png">
+  <img height="165" src="https://i.imgur.com/oOubYpp.png">
 </p>
 
-# Class Methods
+# Usage
 
+## Installation
+
+## Class Methods
+Please see example.py as an example on how to use the model.
+
+An exhaustive list of class methods:
 
 | Method                                          | Description                          | 
 | :-----------------------------------------------|:------------------------------------| 
@@ -69,10 +75,17 @@ Due to the large dataset, the process was broken down into stages to assist with
 | positive_word_ranking()                          |                                      |
 
 # Results
-* [ROC curves on same axes]
-* AUC values: X, Y
-* [Top 20 -ve and +ve words]
+ROC results:
+<p align="center">
+  <img height="400" src="https://i.imgur.com/yg5AvVe.png">
+</p>
+
+Top 20 positive and negative words:
+[Top 20 -ve and +ve words]
 
 # Areas for improvement
 * Improved review cleansing
-* Using N-grams: Bigrams / trigrams as opposed to unigrams
+    * removing words that occur frequently in both positive and negative reviews
+    * grouping words that are relevant to each other in the context of beer, e.g. aroma / smell / scent
+* Using N-grams
+    * Bigrams / trigrams as opposed to unigrams, this would be mean the model would interpret "not good" as a group rather than "not" and "good" separately
