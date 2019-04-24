@@ -11,6 +11,7 @@ from sklearn import metrics
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
 import csv
+import matplotlib.pyplot as plt
 
 
 class Model(object):
@@ -34,6 +35,14 @@ class Model(object):
 		self.positive_review_word_count = None
 		self.probability_negative = None
 		self.probability_positive = None
+		self.fpr_classifier = None
+		self.tpr_classifier = None
+		self.thresholds_classifier = None
+		self.auc_value_classifier = None
+		self.fpr_scikit = None
+		self.tpr_scikit = None
+		self.thresholds_scikit = None
+		self.auc_value_scikit = None
 
 	def split_data(self, test_percentage):
 		# Shuffle beer review dataframe
@@ -264,12 +273,12 @@ class Model(object):
 		csvFile.close()
 
 		# Generate the roc curve using scikit-learn.
-		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, predicted_scores, pos_label=1)
+		self.fpr_classifier, self.tpr_classifier, self.thresholds_classifier = metrics.roc_curve(actual_scores, predicted_scores, pos_label=1)
 
 		# Calculate AUC (area under curve) - closer to 1, the "better" the predictions
-		auc_value = metrics.auc(fpr, tpr)
-		print("AUC of the Classifier: {0}".format(metrics.auc(fpr, tpr)))
-		return auc_value
+		self.auc_value_classifier = metrics.auc(self.fpr_classifier, self.tpr_classifier)
+		print("AUC of the Classifier: {0}".format(self.auc_value_classifier))
+		return self.auc_value_classifier
 
 	def calculate_auc_scikit(self):
 		# Calculate AUC using Scikit
@@ -289,12 +298,26 @@ class Model(object):
 		actual_scores = self.test_beer_reviews['Category Score'].tolist()
 
 		# Generate the roc curve using scikit-learn.
-		fpr, tpr, thresholds = metrics.roc_curve(actual_scores, predictions, pos_label=1)
+		self.fpr_scikit, self.tpr_scikit, self.thresholds_scikit = metrics.roc_curve(actual_scores, predictions, pos_label=1)
 
 		# Calculate AUC (area under curve) - closer to 1, the "better" the predictions
-		auc_value = metrics.auc(fpr, tpr)
-		print("Scikit Multinomial naive bayes AUC: {0}".format(metrics.auc(fpr, tpr)))
-		return auc_value
+		self.auc_value_scikit = metrics.auc(self.fpr_scikit, self.tpr_scikit)
+		print("Scikit Multinomial naive bayes AUC: {0}".format(self.auc_value_scikit))
+		return self.auc_value_scikit
+
+	def plot_roc(self):
+		plt.title('Receiver Operating Characteristic - Classifier vs. Scikit Multi NB')
+		plt.plot(self.fpr_classifier, self.tpr_classifier, 'b', label = 'Classifier AUC = %0.2f' % self.auc_value_classifer)
+		plt.plot(self.fpr_scikit, self.tpr_scikit, 'b', label = 'Scikit AUC = %0.2f' % self.auc_value_scikit)
+		plt.legend(loc = 'lower right')
+		plt.plot([0, 1], [0, 1],'r--')
+		plt.xlim([0, 1])
+		plt.ylim([0, 1])
+		plt.ylabel('True Positive Rate')
+		plt.xlabel('False Positive Rate')
+		plt.show()
+		return None
+
 
 	def negative_word_ranking(self):
 		# Show the top 25 words that have the highest probability of giving a negative score
