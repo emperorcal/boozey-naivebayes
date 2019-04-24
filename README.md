@@ -51,8 +51,14 @@ Due to the large dataset, the process was broken down into stages to assist with
 
 ## Installation
 
+To install the required Python packages, run the following:
+
+```
+pip install -r requirements.txt
+```
+
 ## Class Methods
-Please see example.py as an example on how to use the model.
+Please see [example.py](example.py) as an example on how to use the model.
 
 An exhaustive list of class methods:
 
