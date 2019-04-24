@@ -18,7 +18,7 @@ beer_model.load_word_probabilities()
 # Calculate AUC of classifier
 beer_model.calculate_auc_classifier()
 
-# Calculate AUC of classifier
+# Calculate AUC of scikit Multi NB classifier
 beer_model.calculate_auc_scikit()
 
 #Plot ROC curves
