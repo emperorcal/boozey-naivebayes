@@ -3,7 +3,7 @@ A Naïve Bayes classifier build from scratch in Python aimed at predicting eithe
 
 The overall number of beer reviews in the dataset is 31079, with an 80/20 split for training and testing (24863 train / 6216 test reviews).
 
-AUC of 0.797 was achieved with the classifier versus an AUC of 0.917 using Scikit multi NB.
+AUC of 0.797 was achieved with the classifier versus an AUC of 0.917 using a Scikit multi NB model.
 
 # Theory
 Bayes’ law is a ubiquitous mathematical theorem describing the probability of an event, based on prior knowledge of conditions (potentially) related to the event. Given by:
@@ -92,7 +92,7 @@ Top 20 positive and negative words:
 # Areas for improvement
 * Improved review cleansing
     * splitting words with dashes, currently processed as block, e.g. "after-taste" goes to "aftertaste" after text cleaning
-    * removing words that occur frequently in both positive and negative reviews
+    * removing words that occur frequently in both positive and negative reviews, e.g. beer 
     * grouping words that are relevant to each other in the context of beer, e.g. aroma / smell / scent
 * Using N-grams
     * Bigrams / trigrams as opposed to unigrams, this would be mean the model would interpret "not good" as a group rather than "not" and "good" separately
