@@ -5,14 +5,15 @@ from nltk.stem import WordNetLemmatizer
 from autocorrect import spell
 from collections import Counter
 import re
-import plotly.plotly as py
-import plotly.graph_objs as go
 from sklearn import metrics
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
 import csv
 import matplotlib.pyplot as plt
-
+import numpy as np
+from PIL import Image
+from wordcloud import WordCloud
+import random
 
 class Model(object):
 	def __init__(self, file_path, file_path_dataset):
@@ -87,7 +88,7 @@ class Model(object):
 
 		counter = 0
 		for index, row in self.train_beer_reviews.iterrows():
-			print("{}/{} ({}%)".format(counter_loop + 1, self.train_beer_reviews.shape[0], ((counter_loop + 1) / self.train_beer_reviews.shape[0]) * 100))
+			print("{}/{} ({}%)".format(counter + 1, self.train_beer_reviews.shape[0], ((counter + 1) / self.train_beer_reviews.shape[0]) * 100))
 			counter = counter+ 1
 			# Use clean_text() to clean review text
 			self.train_beer_reviews.at[index, 'Text'] = self.clean_text(row['Text'])
@@ -328,21 +329,60 @@ class Model(object):
 		plt.show()
 		return None
 
+	def beer_color_func(self, word, font_size, position, orientation, random_state=None, **kwargs):
+		# Required for WordCloud to give random word colour, changing the 'lightness' randomly
+		return "hsl(31, 58%%, %d%%)" % random.randint(30, 75)
 
-	def negative_word_ranking(self):
-		# Show the top 25 words that have the highest probability of giving a negative score
-		# Sort by score and take top 25
+	def negative_wordcloud(self):
+		# Display wordcloud of top 200 words by negative probability
+		# Calculate words that occur in both positive and negative reviews
 		overlapping_words = list(set(self.negative_review_words.split()).intersection(self.positive_review_words.split()))
-		new_df = self.word_probabilities[~self.word_probabilities.word.isin(overlapping_words)].sort_values(by=['negative_probability'], ascending=False).head(200)
-		new_df.plot(kind='bar', x='word', y='negative_probability')
+
+		# Create temporary dataframe with overlapping words removed, ranked in order of negative probability and top 200 only
+		temp_df = self.word_probabilities[~self.word_probabilities.word.isin(overlapping_words)].sort_values(by=['negative_probability'], ascending=False).head(200)
+
+		# Create dictionary of word and corresponding negative probability required for WordCloud
+		negative_word_dict = temp_df.set_index('word')['negative_probability'].to_dict()
+
+		# Grab beer image and transform into NumPy array to be used as a mask for the WordCloud
+		beer_mask = np.array(Image.open("beer_mask.png"))
+
+		# Create WordCloud object using the beer mask
+		wc = WordCloud(background_color="white", max_words=1000, mask=beer_mask)
+
+		# Generate WordCloud using negative word dictionary, with custom colouring
+		wc.generate_from_frequencies(negative_word_dict)
+		plt.imshow(wc.recolor(color_func=self.beer_color_func, random_state=3), interpolation="bilinear")
+
+		# Add title, remove axis and plot WordCloud
+		plt.title("Words most likely to give a negative beer review")
+		plt.axis("off")
 		plt.show()
 		return None
 
-	def positive_word_ranking(self):
-		# Show the top 25 words that have the highest probability of giving a positive score
-		# Sort by score, remove duplicates and take top 25
+	def positive_wordcloud(self):
+		# Display wordcloud of top 200 words by positive probability
+		# Calculate words that occur in both positive and negative reviews
 		overlapping_words = list(set(self.negative_review_words.split()).intersection(self.positive_review_words.split()))
-		new_df = self.word_probabilities[~self.word_probabilities.word.isin(overlapping_words)].sort_values(by=['positive_probability'], ascending=False).head(25)
-		new_df.plot(kind='bar',x='word',y='positive_probability')
+
+		# Create temporary dataframe with overlapping words removed, ranked in order of positive probability and top 200 only
+		temp_df = self.word_probabilities[~self.word_probabilities.word.isin(overlapping_words)].sort_values(by=['positive_probability'], ascending=False).head(200)
+
+		# Create dictionary of word and corresponding positive probability required for WordCloud
+		positive_word_dict = temp_df.set_index('word')['positive_probability'].to_dict()
+
+		# Grab beer image and transform into NumPy array to be used as a mask for the WordCloud
+		beer_mask = np.array(Image.open("beer_mask.png"))
+
+		# Create WordCloud object using the beer mask
+		wc = WordCloud(background_color="white", max_words=1000, mask=beer_mask)
+
+		# Generate WordCloud using negative word dictionary, with custom colouring
+		wc.generate_from_frequencies(positive_word_dict)
+		plt.imshow(wc.recolor(color_func=self.beer_color_func, random_state=3), interpolation="bilinear")
+
+		# Add title, remove axis and plot WordCloud
+		plt.title("Words most likely to give a positive beer review")
+		plt.axis("off")
 		plt.show()
 		return None
