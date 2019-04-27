@@ -333,8 +333,8 @@ class Model(object):
 		# Show the top 25 words that have the highest probability of giving a negative score
 		# Sort by score and take top 25
 		overlapping_words = list(set(self.negative_review_words.split()).intersection(self.positive_review_words.split()))
-		new_df = self.word_probabilities[~self.word_probabilities.word.isin(overlapping_words)].sort_values(by=['negative_probability'], ascending=False).head(25)
-		new_df.plot(kind='bar',x='word',y='negative_probability')
+		new_df = self.word_probabilities[~self.word_probabilities.word.isin(overlapping_words)].sort_values(by=['negative_probability'], ascending=False).head(200)
+		new_df.plot(kind='bar', x='word', y='negative_probability')
 		plt.show()
 		return None
 

@@ -24,4 +24,4 @@ beer_model.load_word_probabilities()
 #Plot ROC curves
 #beer_model.plot_roc()
 beer_model.negative_word_ranking()
-beer_model.positive_word_ranking()
+#beer_model.positive_word_ranking()

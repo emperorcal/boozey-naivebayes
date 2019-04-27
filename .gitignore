@@ -106,5 +106,5 @@ data/
 # word documents
 *.docx
 
-#py charm
-**/.idea/workspace.xml **/.idea/tasks.xml
+# PyCharm
+.idea/
