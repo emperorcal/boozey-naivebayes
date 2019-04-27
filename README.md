@@ -77,8 +77,10 @@ An exhaustive list of class methods:
 | calculate_auc_classifier()                       |                                      |
 | calculate_auc_scikit()                           |                                      |
 | plot_roc()                                       |                                      |
-| negative_word_ranking()                          |                                      |
-| positive_word_ranking()                          |                                      |
+| beer_color_func()                                       |                                      |
+| negative_wordcloud()                          |                                      |
+| positive_wordcloud()                          |                                      |
+
 
 # Results
 ROC results:
@@ -86,8 +88,11 @@ ROC results:
   <img height="400" src="https://i.imgur.com/yg5AvVe.png">
 </p>
 
-Top 20 positive and negative words:
-[Top 20 -ve and +ve words]
+WordClouds for words that are most likely to give positive and negative reviews:
+<p align="center">
+  <img src="https://i.imgur.com/vYV6qIA.png" width="430" />
+  <img src="https://i.imgur.com/YI5IzIC.png" width="430" />
+</p>
 
 # Areas for improvement
 * Improved review cleansing
