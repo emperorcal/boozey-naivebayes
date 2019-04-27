@@ -331,44 +331,18 @@ class Model(object):
 
 	def negative_word_ranking(self):
 		# Show the top 25 words that have the highest probability of giving a negative score
-		# Sort by score, remove duplicates and take top 25
-		score_df = self.word_probabilities.sort_values(by=['negative_probability'], ascending=False).drop_duplicates(keep='first').head(25)
-
-		# Plot bar chart
-		data = [
-			go.Bar(
-				x=score_df['word'],
-				y=score_df['negative_probability']
-			)
-		]
-
-		layout = go.Layout(
-			title='Words most likely to produce a negative beer review'
-		)
-
-		fig = go.Figure(data=data, layout=layout)
-
-		py.iplot(fig, filename='negative-words-bar-chart')
+		# Sort by score and take top 25
+		overlapping_words = list(set(self.negative_review_words.split()).intersection(self.positive_review_words.split()))
+		new_df = self.word_probabilities[~self.word_probabilities.word.isin(overlapping_words)].sort_values(by=['negative_probability'], ascending=False).head(25)
+		new_df.plot(kind='bar',x='word',y='negative_probability')
+		plt.show()
 		return None
 
 	def positive_word_ranking(self):
 		# Show the top 25 words that have the highest probability of giving a positive score
 		# Sort by score, remove duplicates and take top 25
-		score_df = self.word_probabilities.sort_values(by=['positive_probability'], ascending=False).drop_duplicates(keep='first').head(25)
-
-		# Plot bar chart
-		data = [
-			go.Bar(
-				x=score_df['word'],
-				y=score_df['positive_probability']
-			)
-		]
-
-		layout = go.Layout(
-			title='Words most likely to produce a positive beer review'
-		)
-
-		fig = go.Figure(data=data, layout=layout)
-
-		py.iplot(fig, filename='positive-words-bar-chart')
+		overlapping_words = list(set(self.negative_review_words.split()).intersection(self.positive_review_words.split()))
+		new_df = self.word_probabilities[~self.word_probabilities.word.isin(overlapping_words)].sort_values(by=['positive_probability'], ascending=False).head(25)
+		new_df.plot(kind='bar',x='word',y='positive_probability')
+		plt.show()
 		return None
