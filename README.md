@@ -5,6 +5,8 @@ The overall number of beer reviews in the dataset is 31079, with an 80/20 split 
 
 AUC of 0.797 was achieved with the classifier versus an AUC of 0.917 using a Scikit multi NB model.
 
+[Wordclouds](#wordclouds) were created to show the words most likely to produce a positive and negative beer review.
+
 # Theory
 Bayes’ law is a ubiquitous mathematical theorem describing the probability of an event, based on prior knowledge of conditions (potentially) related to the event. Given by:
 <p align="center">
@@ -83,10 +85,15 @@ An exhaustive list of class methods:
 
 
 # Results
-ROC results:
+
+## ROC
+
 <p align="center">
   <img height="400" src="https://i.imgur.com/yg5AvVe.png">
 </p>
+
+
+## Wordclouds
 
 WordClouds for words that are most likely to give positive and negative reviews:
 <p align="center">
