@@ -88,6 +88,7 @@ An exhaustive list of class methods:
 
 ## ROC
 
+The model achieved an AUC of 0.80 which is relatively good considering how basic it is. [Outlined below](#areas-for-improvement) are areas for development to potentially improve the model.
 <p align="center">
   <img height="400" src="https://i.imgur.com/yg5AvVe.png">
 </p>
