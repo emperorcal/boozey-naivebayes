@@ -66,29 +66,29 @@ An exhaustive list of class methods:
 
 | Method                                          | Description                          | 
 | :-----------------------------------------------|:------------------------------------| 
-| \_\_init\_\_(file_path, file_path_dataset)      |                                      |
-| split_data(test_percentage)                      |                                      |
-| clean_text(text)                                 |                                      |
-| clean_dataframes()                               |                                      | 
-| calculate_constants(dataset)                     |                                      |
-| load_dataframes()                                |                                      |
-| get_word_count(text, search_word)                |                                      |
-| predict_review(review)                           |                                      |
-| calculate_word_probabilities()                   |                                      |
-| load_word_probabilities()                        |                                      |
-| calculate_auc_classifier()                       |                                      |
-| calculate_auc_scikit()                           |                                      |
-| plot_roc()                                       |                                      |
-| beer_color_func()                                       |                                      |
-| negative_wordcloud()                          |                                      |
-| positive_wordcloud()                          |                                      |
+| \_\_init\_\_(file_path, file_path_dataset)      | Class constructor requiring file path to store data and beer data filename              |
+| split_data(test_percentage)                      | Splits the original dataset into test and train dataframes by test percentage  |
+| clean_text(text)                                 | Cleans text as per process above, input and output is a string                |
+| clean_dataframes()                               | Cleans all review text in both test and train dataframes and stores both as separate CSV files in the class file path                                    | 
+| calculate_constants(dataset)                     | With given dataset, calculates all constants required for Naive Bayes classifier  |
+| load_dataframes()                                | Loads cleaned test and train CSV files into dataframes                       |
+| get_word_count(text, search_word)                | Given search_word (substring) returns integer of count within given text     |
+| predict_review(review)                           | Uses constants and word probabilities within Naive Bayes classifier to predict specific outcome of given review                      |
+| calculate_word_probabilities()                   | Calculates both positive and negative word probabilities for all distinct words in train dataframe and then stores as a CSV in class file path                                     |
+| load_word_probabilities()                        | Loads word probabilities from CSV to dataframe                                     |
+| calculate_auc_classifier()                       | Predicts reviews on the test dataframe using the classifier and returns the AUC  |
+| calculate_auc_scikit()                           | Predicts reviews on the test dataframe using Scikit Multi NB classifier and returns the AUC                                     |
+| plot_roc()                                       | Plots both AUC values on chart for comparison |
+| beer_color_func()                                       |   Returns random beer colour, required for wordcloud                                   |
+| negative_wordcloud()                          | Creates beer masked wordcloud of negative words           |
+| positive_wordcloud()                          | Creates beer masked wordcloud of positive words  |
 
 
 # Results
 
 ## ROC
 
-The model achieved an AUC of 0.80 which is relatively good considering how basic it is. [Outlined below](#areas-for-improvement) are areas for development to potentially improve the model.
+The model achieved an AUC of 0.80 which is relatively good considering how basic it is. For comparison, a Scikit Multi Naive Bayes model was created using the same dataset. [Outlined below](#areas-for-improvement) are areas for development to potentially improve the model.
 <p align="center">
   <img height="400" src="https://i.imgur.com/yg5AvVe.png">
 </p>
